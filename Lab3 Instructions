@@ -1,0 +1,89 @@
+Lab 3 – Integer Investigation
+CSE 2421 – Systems I
+Reminder: All labs are to be completed entirely on your own.
+Information about the Linux environment and your CSE account can be found as separate references.  Please refer to the General Lab Guidelines for detailed information on grading, submission, and academic misconduct.
+Demonstrating
+•	Structures
+•	Pointers
+•	Linked Lists
+•	Dynamic Allocation
+Overview
+•	Applications from scientific computation to distributed databases to physical simulations to image rendering all have a need to deal with incredibly large and precise information; however, hardware (like a processor) is intrinsically bounded in its capabilities – it cannot magically process an arbitrarily precise piece of data.  Software must help.  In this lab, you will explore a means to allow mathematical operations on very large numbers.
+Outline
+•	You will implement a program capable of “truly arbitrary precision integer arithmetic”.
+•	This means the user can use integers of any size
+o	A typical short integer (16 bits) can represent a maximum value of 65,535
+o	A typical long integer (32 bits) can represent a maximum value of 4,294,967,295
+o	A typical long long integer (64 bits) can represent a maximum value of 18,446,744,073,709,551,615
+o	We want to allow the user to use much, much, much bigger numbers
+•	The user will enter two (base 10) integers, of an arbitrary size
+•	The user will then select an operation:
+o	Add (‘+’)
+o	Subtract (‘-‘)
+•	The program will print the result, and quit
+•	Negative numbers are not allowed
+
+Design
+•	Integers will be represented as a linked list of single digits
+o	To grow an integer, you allocate and link new digits
+•	integer.h
+o	Will contain your definitions for any required structures; at a minimum, it will contain the declaration for your arbitrary integer structure, which I will call “immense_int_t” (you may call it what you like).
+•	integer.c
+o	Will contain, at a minimum, the following functions:
+	‘add’, which accepts two ‘immense_int_t’s, and returns a new ‘immense_int_t’ representing their sum
+	‘subtract’, which accepts two ‘immense_int_t’s, and returns a new ‘immense_int_t’ representing their difference
+	A function to create a new ‘immense_int_t’
+	A function to destroy an ‘immense_int_t’
+
+Constraints
+•	Input
+o	All input lines are terminated with a newline character (‘\n’).  There is no other whitespace on an input line.
+o	An input integer will have at least one digit.
+o	There is no upper bound on the size of the input integers, other than it will not be so large that your process runs out of memory.
+o	There will be no commas in the input integer; the only valid input characters for an integer are 0-9.
+o	The first two input lines will always be integers, the last (third) input line will always be either the character ‘+’, or ‘-‘, indicating the desired operation
+o	When subtraction is specified, the larger number will always be first, so that the result remains positive.
+o	Input integers will have no leading 0’s.
+•	Output
+o	Your output should consist of only the result, followed by a newline character (‘\n’).  Do not include any other whitespace or output.
+o	Your output integer should have no leading 0’s
+o	Valid characters for the result are 0-9
+
+Hints
+•	Simulate longhand addition and subtraction, working with a single digit at a time, as you might while working with pencil and paper.
+
+Sample input and output
+•	Example input 1:
+o	10984729
+o	93940001
+o	+
+•	Example output 1:
+o	104924730
+•	Example input 2:
+o	1092337
+o	342888
+o	-
+•	Example output 2:
+o	749449
+•	Example view from the command line, with manual input/output
+o	./integer
+o	10984729
+o	93940001
+o	+
+o	104924730
+o	./integer
+o	1092337
+o	342888
+o	-
+o	749449
+
+Compiling and Naming	
+•	Your source code must be named “integer.c” and “integer.h”
+•	Your source must compile with:
+gcc –Wall integer.c –o integer
+
+Submission
+•	Submit only:
+o	integer.c
+o	integer.h
+o	README
