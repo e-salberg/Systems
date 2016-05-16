@@ -1,0 +1,50 @@
+Lab 7 – Functions, Stack Manipulation, Calling Convention, & Switch Statements
+CSE 2421 – Systems I
+Reminder:  All labs are to be completed entirely on your own.
+Information about the Linux environment and your CSE account can be found as separate references.  Please refer to the General Lab Guidelines for detailed information on grading, submission, and academic misconduct.
+Goals
+•	To understand the implementation of functions in assembly
+•	To understand the cdecl C calling convention
+•	To understand proper stack manipulation
+•	To understand switch statements as implemented in assembly
+•	To understand how to consume command-line arguments in assembly
+•	To understand how to call C library functions from assembly
+
+Background
+•	Remember that a switch statement in C has some important characteristics:
+o	The comparison to the variable being switched over is done exactly once, at the top of the switch statement
+o	The comparisons are done only against constant values
+o	The code that we jump into for each possible choice executes until a break is reached (jumping to the bottom of the switch statement), or until control flow reaches the bottom by falling-through naturally.
+•	Now’s a good time to familiarize yourself with the cdecl calling semantics to make sure you understand the responsibilities of function callers and callees. It covers parameter passing, stack management, caller / callee saves, how return values are provided to the caller, and so forth.
+
+Overview
+•	In this lab you will be given a piece of standard C that does some function calls, integer math, conditionals, looping, and switch statements: lab7_c.c
+•	You will translate that C into x86 assembly: lab7_asm.asm
+•	We provide you hello_asm.c and this exact C code translated into fully commented assembly in hello_asm.asm. These comprise a hello-world-like sample that shows you the fundamentals such as how to process command line arguments and call printf in assembly.  Note that we unsafely assume that there will always be 2 strings sent as command line arguments into hello_c and hello_asm, strings that will properly parse into integers with the atoi() system call. You may make these same assumptions for lab7_asm.asm.
+•	You will use the sample hello_asm.asm as the starting point for your lab7 solution which you must save in the file named lab7_asm.asm
+•	We provide you a Makefile that is complete and will build the lab7_asm binary for you once you create lab7_asm.asm. You must use this Makefile in order to build your solution, as the build process has changed a bit to accommodate command line argument parsing and calling C library functions. Note: the Makefile may be called Makefile.txt depending upon how you obtain it, and you might need to rename it to Makefile on the stdlinux machines.
+•	You must implement identically the same behavior as the lab7_c.c C code, including all the calls to printf.  We will be capturing the output of your assembly binary and will compare that output with the output from our C binary. Discrepancies will result in point loss at our discretion.
+•	We will only pass syntactically and semantically correct command-line arguments to your binary, ones that are known to work properly with the C code (i.e. integers as strings, where the first argument (outer_limit) is always > 0, and the second argument (inner_limit) is always < 2).
+•	You are allowed to use the following general-purpose registers in your solution EAX, EBX, ECX, EDX, ESI, EDI, and you must follow all the cdecl calling conventions as discussed in class, to include caller/callee saves, caller stack restoration, and so forth.
+•	Again, the simplest solution that works is all you’re after, performance of this code is not the goal, yet… We’re still chasing the fundamentals…
+
+Your Solution
+•	On your CSE account, create a directory called “lab7”, and enter this directory.
+•	In the same place this lab is posted, you will find all the other pertinent pieces of code to go along with this document and get you started.
+•	Note that the Makefile demonstrates using objdump to disassemble a binary back into its assembly. This is, of course, exceedingly helpful, but you should be very cautious of how you use it.  You may feel tempted to simply reverse-engineer the provided C code into assembly and simply modify it slightly and comment it then hand it back in to us. If we can ascertain that you have done this, you will likely be penalized. You should note that you will be expected to be able to execute on the concepts learned in this lab on the next two exams, so short-cuts here will likely harm you in the long run.
+•	You should heavily comment your code to demonstrate to us that you understand what it’s doing.
+•	You should use the debugging techniques presented in the previous labs along with anything you can obtain via Google, etc. GDB does make debugging this pretty straight forward.  It may save you time to know that you can do things like:
+o	print *(int *)($ebp+0x10): treats the value of ebp (a pointer) plus 16 bytes to be a pointer to an integer, and print the integer found at that location (16 bytes higher in memory than wherever the base pointer is pointing)
+
+Output Requirements
+Your output (that you simply print to standard output via calls to printf) must exactly match the output of the provided C lab7_c.c output.
+
+Submitting
+•	Create a README file in your lab directory, containing:
+o	All of the standard README requirements.
+•	Your lab directory should contain at least the following files:
+o	lab7_asm.asm
+o	Makefile
+o	README
+•	You may modify the Makefile however you see fit as long as it builds lab7_asm out of lab7_asm.asm and allows the graders to do: “make lab7_asm” to build it.
+•	Submit these files using the submit command format you have used in previous labs.
