@@ -13,3 +13,9 @@ lab4.h - header file for lab 4
 lab4.c - main code for lab 4
 
 functions.c - implementations for functions used in lab 4
+
+Lab7 Instructions - instructions for lab 7
+
+lab7_c.c - C code for lab 7
+
+lab7_asm.asm - assembly equivalent of lab7_c.c
