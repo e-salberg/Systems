@@ -1,0 +1,202 @@
+CSE 2421
+Spring 2014
+Lab 4
+Please reference the General Lab Guidelines for detailed information on grading, submission, and academic misconduct.
+
+Demonstrating
+•	C structs
+•	Multi-dimensional arrays on the heap
+•	Function pointers used to invoke logic dynamically
+•	Typedefs to simplify the confusing function pointer syntax
+•	Linking multiple pieces of code together
+
+Overview
+In this lab you will implement a three-dimensional matrix of C structs on the heap and will then transform the elements of the matrix per instructions provided to your program by an input file.
+
+Your software receives data from the input file that you will use to construct a three-dimensional matrix of data structures.  You must also create an array of pointers to the various transformation functions that your software will be asked to perform on the matrix. The input file will provide you an ordered sequence of transformations to perform on the matrix, as well as the arguments to the transformation functions.  The input file will indicate which transformation to execute via a zero-based index into the array of function pointers you will establish and maintain.
+
+Background
+First, let’s refresh a few concepts that you may or may not yet clearly understand:
+
+typedef can be used to create aliased types in C, for example, if we define a structure like so:
+
+struct struct_blah
+{
+    uint32_t some_int;
+    char *some_string_pointer;
+};
+
+We can then create an alias called blah to this structure we declared above as follows:
+
+typedef struct struct_blah blah_t;
+
+This allows us to refer to this new type in our C code as follows:
+
+blah_t x;
+
+And then use it like any structure in our C code as follows:
+
+x.some_int = 5;
+ 
+Your use of function pointers must use typedefs in order to make your software substantially less confusing to everyone involved.
+
+An example of a function pointer definition with typedef and subsequent array definition follows:
+
+// define some_function_pointer as an alias to a pointer to a function that takes two integers as arguments
+typedef int (*some_function_pointer+t)(int arg1, int arg2);
+
+// define a pointer to this aliased type, which is synonymous with an array of this aliased type, just like a pointer to an int is really synonymous with a pointer to an int
+some_function_pointer_t *array_of_pointers;
+
+// allocate a 10-element array of these function pointers on the heap using calloc that we can use as an array
+array_of_pointers = calloc(10, sizeof(some_function_pointer_t));
+
+supposing you had the following function in your code:
+
+int multiply_ints_function(int arg1, int arg2)
+{
+    return arg1 * arg2;
+}
+
+This function takes two integers as arguments and returns the two arguments multiplied together, also an integer, so therefore, your function pointer declared above can hold a reference to this function’s location in memory since the return type, number of arguments and argument positions match. You can assign the pointer to this function’s location in memory to an element of the array of function pointers you created above by doing the following:
+
+array_of_pointers[0] = multiply_ints_function;
+
+Design
+You must create a three-dimensional matrix of elements on the heap.  The struct that you must maintain at each of the elements of the matrix you will create will be:
+
+// the struct holding the data in the matrix that we will be processing
+struct spacial_data
+{
+    double temperature_in_celsius;
+    double density_in_kg_per_m2;
+};
+// an alias to this structure to simplify readability
+typedef struct spacial_data spacial_data_t;
+
+Following the patterns you see discussed in the background section above, you must create 4 different functions with names of your choice that all return an integer (the status of the operation, zero on success, non-zero otherwise) and take exactly the same three arguments, a pointer to a spacial_data structure defined above, an argument that will used given the transformation being done to modify the temperature in the data structure provided via the pointer, and an argument that will be used given the transformation being done to modify the density in the data structure provided via the pointer.
+
+The behavior of the 4 functions you must implement are:
+
+Add – temperature = temperature + arg1; density = density + arg2;
+Multiply – temperature = temperature * arg1; density = density * arg2;
+SquareRoot – if arg1 != 0, temperature = sqrt(temperature); if arg2 != 0 density = sqrt(density)
+Square – if arg1 != 0, temperature = temperature ^ 2; if arg2 != 0 density = density ^ 2
+
+NOTE: remember that comparing a floating point to zero can be tricky.  Be cautious.
+
+You must add the 4 functions to your array of function pointers you will maintain in exactly the order listed above, because the transformations in the input file below will depend upon your table of pointers being in exactly this order.  Thus, your add function will be at element 0, and your square function will be at element 3, etc.
+
+
+
+
+Sample Input
+
+Your program will read input from standard input that is structured as follows:
+2 3 4
+30.68453809 0.270560919
+22.91293346 0.608458765
+28.30182473 0.443305783
+24.22912142 0.49463529
+22.94375419 0.123445748
+28.57893932 0.686173138
+31.67882174 0.154954922
+28.56452894 0.186699141
+31.03668623 0.785229138
+27.84189426 0.778298538
+27.5001606 0.702140275
+22.97152758 0.116496139
+31.69909314 0.558039955
+25.1255729 0.911219884
+26.50063224 0.254853499
+24.24655623 0.783553283
+23.33969183 0.580511105
+24.45632831 0.79515989
+30.41302185 0.479457965
+26.8546226 0.571453911
+29.90824021 0.265361307
+22.23609239 0.429408157
+23.1707712 0.701305526
+22.70499085 0.414066833
+0 2.3714195 0.0
+0 0.0 -0.0012345678
+1 0.9134189 1.0131151
+2 1.0 0.0
+3 0.0 1.0
+The first line specifies the discrete magnitude (a positive integer) of the three dimensions of the matrix, in the form: X-size Y-size Z-size, so for example, 2 3 4 indicates that the matrix is sized 2x3x4 (24) elements, so, elements [0,0,0] through [1,2,3].  These dimensions can be any legal positive integers, and you MUST use the heap to construct this data structure, nothing can be on the stack.
+
+The next 24 lines will contain the tuples of data that comprise each element of the matrix.  Note that each number is double-precision so could be quite long and you should ensure you can properly handle reading this input using something like scanf, etc.
+Were you given this input, you should load the data from the rows into the matrix in the following order:
+
+0,0,0
+0,0,1
+0,0,2
+0,0,3
+0,1,0
+0,1,1
+.
+.
+.
+1,0,0
+1,0,1
+.
+.
+.
+1,1,0
+1,1,1,
+.
+.
+.
+1,2,2
+1,2,3
+
+Once your program constructs the 3-dimensional matrix of data structures, it will then receive instructions that tell it how to transform the matrix’s data.  You should continue reading until the end-of-file is reached and process each instruction, performing the requested operation on every element of the matrix.
+
+The lines containing the Instructions are formatted as follows:
+
+<operation number> <first argument> <second argument>
+
+Where operation number tells your program which function to invoke through the pointer you have stored in your array of supported operations, and the two arguments are the two doubles passed to the invoked function that is invoked upon each element of the matrix.
+
+Sample Output
+Finally, when you reach end-of-file, dump out the entire matrix in the syntax shown below.  The above input results in exactly the following output:
+5.494901 0.074452
+4.805747 0.378456
+5.293158 0.200587
+4.929243 0.249872
+4.808675 0.015330
+5.317014 0.481527
+5.576929 0.024254
+5.315777 0.035305
+5.524092 0.630876
+5.253324 0.619771
+5.223530 0.504239
+4.811312 0.013636
+5.578589 0.318218
+5.011614 0.849936
+5.135395 0.066021
+4.930858 0.628181
+4.846134 0.344421
+4.950250 0.646959
+5.472287 0.234736
+5.166780 0.333735
+5.429996 0.071605
+4.740988 0.188173
+4.830188 0.503039
+4.785945 0.174930
+
+Additional Requirements:
+
+You must read all data from standard input.
+You must write all data to standard output.
+The data you write must be formatted exactly as specified in the sample output above and will be evaluated automatically.
+Your program’s source code must be named “lab4.c” (minus quotes, of course).
+Your matrix operation functions must be placed into a second source file that you must link into your lab4 when you compile it via your Makefile.  You can name the file the functions are found in <anything you like>.c.  You must also have a header file (named <anything you like>.h) that contains the prototypes for those operations functions as well as the definition of the spacial data structure and typedef, and you must include only the header file into lab3.c.
+Your program’s executable must be named exactly “lab4” (minus quotes, of course).
+You must include a Makefile that is used to build your executable.
+You may not use any stack-based arrays except as temporary buffers to read data into while you’re parsing it if you choose to do such a thing.
+You are expected to check the return code of each of the transformation operations to ensure that they didn’t fail.
+You are expected to properly free any data structures you allocated from the heap before the program completes.
+
+You can assume that input data will be completely valid, in that it will be both syntactically and semantically correct.  We will not be constructing input that is structurally invalid or of incorrect data types.
+You must be able to accept arbitrary-length (but legal) double-precision floating point numbers properly, but you should use default formatting for the output of double-precision numbers (i.e. printf(“%lf”) without any precision or padding modifiers).
